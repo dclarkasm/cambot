@@ -18,7 +18,7 @@ else:
     print('The "To email" addresses do not match. Exiting.')
     exit()
 
-image_cmd = "fswebcam -r 1920x1080 --crop 1080x1080[480,0] --no-banner upload-image.jpg"
+image_cmd = "./takeimage.sh"
 city_name = "Boston"
 a = Astral()
 city = a[city_name]
@@ -50,7 +50,8 @@ while(1):
 
     if (now >= sunrise) and (did_upload == False):
         try:
-            os.system(image_cmd)
+            for x in range(0, 3):
+                os.system(image_cmd)
             print("New sunrise image taken: " + str(now))
             send_email()
             print("Successfully emailed sunrise image to " + toemail)
