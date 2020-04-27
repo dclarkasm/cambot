@@ -2,7 +2,6 @@
 import os
 from datetime import datetime
 import time
-from time import sleep
 import yaml
 import argparse
 from email_wrapper import Email
@@ -10,6 +9,8 @@ from camera import Camera
 from myexit import myexit
 
 ''' Todo:
+ - Add LED PWM
+ - Add method for shutdown override
  - Add emails for when errors occur
  - Add low battery indicator status to email
 '''
@@ -28,13 +29,13 @@ if args.creds_file == None:
     myexit(1)
 
 if __name__ == "__main__":
-	trigger_time = None
-	image_path = None
-	with open(args.file) as f:
-	    data = yaml.load(f)
-	    trigger_time = data['trigger_time']
-	    image_path = data['image_path']
-
+    trigger_time = None
+    image_path = None
+    with open(args.file) as f:
+        data = yaml.load(f)
+        trigger_time = tuple(data['trigger_time'])
+        image_path = data['image_path']
+    
     em = Email(args.creds_file)
     c = Camera(image_path)
     
@@ -49,16 +50,16 @@ if __name__ == "__main__":
         deltat = (trigger_dt - now).total_seconds()
         print("Sleeping for %d seconds..." % (deltat))
         time.sleep(deltat)   # sleep until it is time to take the image
-
+    
     try:
         # take image here
         c.take_image()
         print("New birdhouse image taken: " + str(now))
-        em.send_email()
-        print("Successfully emailed birdhouse image to " + toemail)
+        em.send_email(c.image_path)
+        print("Successfully emailed birdhouse image to " + em.toemail)
     except Exception as e:
         print(e)
-    	myexit(1)
+        myexit(1)
     finally:
-    	myexit(0)
+        myexit(0)
     

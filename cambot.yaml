@@ -1,2 +1,2 @@
-trigger_time: (7, 0, 0)  # time of day; 24 hour clock (hours, minutes, seconds)
+trigger_time: [7, 0, 0]  # time of day; 24 hour clock (hours, minutes, seconds)
 image_path: "/home/pi/birdhouse.jpg"
