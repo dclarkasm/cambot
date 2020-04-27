@@ -17,8 +17,8 @@ if [ "$_IP" ]; then
   printf "My IP address is %s\n" "$_IP"
 fi
 
-cd /home/pi/cambot
-./cambot.py -f cambot.yaml -c creds.bin
-sudo shutdown -h now
+cd /home/pi/cambot; \
+sudo -H -u pi /usr/bin/python3 cambot.py -f cambot.yaml -c creds.bin
+#sudo shutdown -h now
 
 exit 0
