@@ -9,7 +9,6 @@ from camera import Camera
 from myexit import myexit
 
 ''' Todo:
- - Add LED PWM
  - Add method for shutdown override
  - Add emails for when errors occur
  - Add low battery indicator status to email
