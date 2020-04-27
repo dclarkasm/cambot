@@ -1,69 +1,64 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 import os
-import datetime
-from astral import Astral
+from datetime import datetime
 import time
-import smtplib
-from email.mime.image import MIMEImage
-from email.mime.multipart import MIMEMultipart
-from getpass import getpass
+from time import sleep
+import yaml
+import argparse
+from email_wrapper import Email
+from camera import Camera
+from myexit import myexit
 
-fromemail = str(raw_input("Please input outgoing email address (gmail only): "))
-frompass = str(getpass(prompt="Please input the password for the outgoing email account: "))
-toemail1 = str(raw_input("Please input the incomming email address: "))
-toemail2 = str(raw_input("Please input the incomming email address again: "))
-if toemail1 == toemail2:
-    toemail = toemail1
-else:
-    print('The "To email" addresses do not match. Exiting.')
-    exit()
+''' Todo:
+ - Add emails for when errors occur
+ - Add low battery indicator status to email
+'''
 
-image_cmd = "./takeimage.sh"
-city_name = "Boston"
-a = Astral()
-city = a[city_name]
-current_date = datetime.date.today()
-sunrise = city.sun(date=current_date, local=True)['sunrise'].replace(tzinfo=None)
-did_upload = False
+parser = argparse.ArgumentParser()
+parser.add_argument("-f", "--file", help = "path to YAML config file")
+parser.add_argument("-c", "--creds_file", help = "path to credentials file")
+args = parser.parse_args()
 
-def send_email():
-    msg = MIMEMultipart()
-    msg['Subject'] = 'Your Daily Sunrise Photo'
-    msg['From'] = fromemail
-    msg['To'] = toemail
+if args.file == None:
+    print("--file is a required argument, Exiting")
+    myexit(1)
 
-    # Open the files in binary mode.  Let the MIMEImage class automatically
-    # guess the specific image type.
-    fp = open('upload-image.jpg', 'rb')
-    img = MIMEImage(fp.read())
-    fp.close()
-    msg.attach(img)
+if args.creds_file == None:
+    print("--creds_file is a required argument, Exiting")
+    myexit(1)
 
-    s = smtplib.SMTP('smtp.gmail.com', 587)
-    s.starttls()
-    s.login(msg['From'], frompass)
-    s.sendmail(msg['From'], [msg['To']], msg.as_string())
-    s.quit()
+if __name__ == "__main__":
+	trigger_time = None
+	image_path = None
+	with open(args.file) as f:
+	    data = yaml.load(f)
+	    trigger_time = data['trigger_time']
+	    image_path = data['image_path']
 
-while(1):
-    now = datetime.datetime.now()
-
-    if (now >= sunrise) and (did_upload == False):
-        try:
-            for x in range(0, 3):
-                os.system(image_cmd)
-            print("New sunrise image taken: " + str(now))
-            send_email()
-            print("Successfully emailed sunrise image to " + toemail)
-            did_upload = True
-        except Exception as e:
-            print(e)
-
-    if datetime.date.today() != current_date:
-        current_date = datetime.date.today()
-        print("Date changed: " + str(current_date))
-        sunrise = city.sun(date=current_date, local=True)['sunrise'].replace(tzinfo=None)
-        print("Today's sunrise: " + str(sunrise))
-        did_upload = False  # reset the upload status for the new day
+    em = Email(args.creds_file)
+    c = Camera(image_path)
     
-    time.sleep(1)
+    time_now = time.localtime()
+    now = datetime.fromtimestamp(time.mktime(time_now))
+    trigger_dt_w = list(time_now)
+    trigger_dt_w[3] = trigger_time[0]
+    trigger_dt_w[4] = trigger_time[1]
+    trigger_dt_w[5] = trigger_time[2]
+    trigger_dt = datetime.fromtimestamp(time.mktime(time.struct_time(tuple(trigger_dt_w))))
+    if (now < trigger_dt):
+        deltat = (trigger_dt - now).total_seconds()
+        print("Sleeping for %d seconds..." % (deltat))
+        time.sleep(deltat)   # sleep until it is time to take the image
+
+    try:
+        # take image here
+        c.take_image()
+        print("New birdhouse image taken: " + str(now))
+        em.send_email()
+        print("Successfully emailed birdhouse image to " + toemail)
+    except Exception as e:
+        print(e)
+    	myexit(1)
+    finally:
+    	myexit(0)
+    
