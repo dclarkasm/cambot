@@ -8,6 +8,7 @@ class ShutdownBypass:
         sock = socket.socket(socket.AF_INET, # Internet
                      socket.SOCK_DGRAM) # UDP
         sock.bind((server_ip, server_port))
+        sock.settimeout(3)
     
     def isBypass(self):
         data, addr = sock.recvfrom(1024) # buffer size is 1024 bytes
