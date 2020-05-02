@@ -3,20 +3,37 @@ import socket
 
 class ShutdownBypass:
     def __init__(self):
-        server_ip = "0.0.0.0"  # Bind to any IP
-        server_port = 5005
-        sock = socket.socket(socket.AF_INET, # Internet
+        self.server_ip = "0.0.0.0"  # 0.0.0.0 to bind to any IP
+        self.port = 5005
+        self.sock = socket.socket(socket.AF_INET, # Internet
                      socket.SOCK_DGRAM) # UDP
-        sock.bind((server_ip, server_port))
-        sock.settimeout(3)
+        self.sock.bind((self.server_ip, self.port))
+        # server should send messages faster than this timeout to prevent race condition
+        self.sock.settimeout(3)  
     
     def isBypass(self):
-        data, addr = sock.recvfrom(1024) # buffer size is 1024 bytes
-        if data == "BYPASS":
-            return True
+        try:
+            data, addr = self.sock.recvfrom(1024)
+            message = data.decode()
+            print("Received message: " + str(message))
+            if message == "BYPASS":
+                self.sock.sendto("ACK".encode(), addr)
+                return True
+        except socket.timeout:
+            print("Timed out waiting for message")
         return False
 
+    def close(self):
+        self.sock.close()
+        print("Socket closed")
+
 if __name__ == "__main__":
-    sb = ShutdownBypass()
-    if sb.isBypass() exit(1)  # Don't shutdown
-    exit(0)  # Shutdown
+    sb = None
+    try:
+        sb = ShutdownBypass()
+        if sb.isBypass():
+            exit(1)  # Don't shutdown
+        exit(0)  # Shutdown
+    finally:
+        if sb is not None:
+            sb.close()
