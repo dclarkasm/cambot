@@ -49,16 +49,18 @@ if __name__ == "__main__":
     print("Testing LED PWM sweep")
     c = Camera("test.jpg")
     print("Camera is initialized")
-    timer_print(5)
+    #timer_print(5)
     print("LED is sweeping ON...")
     c.sweep_led("ON")
     print("LED is ON")
-    timer_print(5)
-    print("LED is sweeping OFF...")
-    c.sweep_led("OFF")
-    print("LED is OFF")
-    timer_print(5)
-    del c
-    print("Called Camera destructor")
-    timer_print(5)
-    print("Exiting")
+    while True:
+        pass
+    #timer_print(5)
+    #print("LED is sweeping OFF...")
+    #c.sweep_led("OFF")
+    #print("LED is OFF")
+    #timer_print(5)
+    #del c
+    #print("Called Camera destructor")
+    #timer_print(5)
+    #print("Exiting")

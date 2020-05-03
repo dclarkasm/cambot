@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import socket
 
-class ShutdownBypass:
+class ShutdownBypassClient:
     def __init__(self):
         self.server_ip = "0.0.0.0"  # 0.0.0.0 to bind to any IP
         self.port = 5005
@@ -30,7 +30,7 @@ class ShutdownBypass:
 if __name__ == "__main__":
     sb = None
     try:
-        sb = ShutdownBypass()
+        sb = ShutdownBypassClient()
         if sb.isBypass():
             exit(1)  # Don't shutdown
         exit(0)  # Shutdown

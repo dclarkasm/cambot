@@ -26,7 +26,7 @@ class Email:
                 self.toemail = toemail1
             else:
                 print('The "To email" addresses do not match. Exiting.')
-                myexit(1)
+                myexit()
 
             # create secret key
             new_key = Fernet.generate_key()  # key length is 44 bytes
@@ -50,7 +50,7 @@ class Email:
             except:
                 print(e)
                 print("Error reading credentials file. Exiting.")
-                myexit(1)
+                myexit()
 
             # decrypt credentials
             try:
@@ -62,7 +62,7 @@ class Email:
             except Exception as e:
                 print(e)
                 print("Error reading credentials. Exiting.")
-                myexit(1)
+                myexit()
 
     def send_email(self, image_path):
         msg = MIMEMultipart()

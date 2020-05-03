@@ -2,7 +2,7 @@
 import socket
 import time
 
-class ShutdownBypass:
+class ShutdownBypassServer:
     def __init__(self):
         self.client_ip = "192.168.1.10"
         self.port = 5005
@@ -31,7 +31,7 @@ class ShutdownBypass:
 if __name__ == "__main__":
     sb = None
     try:
-        sb = ShutdownBypass()
+        sb = ShutdownBypassServer()
         sb.sendBypass()
     finally:
         if sb is not None:

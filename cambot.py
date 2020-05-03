@@ -21,11 +21,11 @@ args = parser.parse_args()
 
 if args.file == None:
     print("--file is a required argument, Exiting")
-    myexit(1)
+    myexit()
 
 if args.creds_file == None:
     print("--creds_file is a required argument, Exiting")
-    myexit(1)
+    myexit()
 
 if __name__ == "__main__":
     trigger_time = None
@@ -56,9 +56,6 @@ if __name__ == "__main__":
         print("New birdhouse image taken: " + str(now))
         em.send_email(c.image_path)
         print("Successfully emailed birdhouse image to " + em.toemail)
-    except Exception as e:
-        print(e)
-        myexit(1)
     finally:
-        myexit(0)
+        myexit()
     

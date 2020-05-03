@@ -18,8 +18,7 @@ if [ "$_IP" ]; then
 fi
 
 cd /home/pi/cambot; \
-sudo -H -u pi /usr/bin/python3 cambot.py -f cambot.yaml -c creds.bin; \
-./bypass_client.py
+sudo -H -u pi /usr/bin/python3 cambot.py -f cambot.yaml -c /home/pi/creds.bin; \
 
 if [ $? -eq 0 ]
 then
