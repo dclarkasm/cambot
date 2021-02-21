@@ -4,7 +4,7 @@ import time
 
 class ShutdownBypassServer:
     def __init__(self):
-        self.client_ip = "192.168.1.10"
+        self.client_ip = "192.168.86.10"
         self.port = 5005
         self.message = "BYPASS"
         self.sock = socket.socket(socket.AF_INET, # Internet
