@@ -22,7 +22,8 @@ sudo -H -u pi /usr/bin/python3 cambot.py -f cambot.yaml -c /home/pi/creds.bin; \
 
 if [ $? -eq 0 ]
 then
-    sudo shutdown -h now
+	echo "About to shutdown..."
+   	sudo shutdown -h now
 fi
 
 exit 0
