@@ -9,7 +9,7 @@ class ShutdownBypassClient:
                      socket.SOCK_DGRAM) # UDP
         self.sock.bind((self.server_ip, self.port))
         # server should send messages faster than this timeout to prevent race condition
-        self.sock.settimeout(3)  
+        self.sock.settimeout(5)  
     
     def isBypass(self):
         try:
