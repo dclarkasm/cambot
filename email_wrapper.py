@@ -80,5 +80,11 @@ class Email:
         s = smtplib.SMTP('smtp.gmail.com', 587)
         s.starttls()
         s.login(msg['From'], self.frompass)
+        print("Successfully logged in to email")
         s.sendmail(msg['From'], [msg['To']], msg.as_string())
         s.quit()
+
+if __name__ == "__main__":
+    em = Email("/home/pi/creds.bin")
+    em.send_email("/home/pi/birdhouse.jpg")
+    print("Complete")
